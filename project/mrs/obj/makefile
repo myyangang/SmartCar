@@ -55,7 +55,7 @@ all: camera.elf secondary-outputs
 
 # 工具调用
 camera.elf: $(OBJS) $(USER_OBJS)
-	@	@	riscv-none-embed-gcc -march=rv32imac -mabi=ilp32 -msmall-data-limit=8 -mno-save-restore -O0 -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -fno-common -Wunused -Wuninitialized  -g -T "C:\Users\Yaner\Desktop\camera\libraries\sdk\Ld\Link.ld" -nostartfiles -Xlinker --gc-sections -L"../" -Wl,-Map,"camera.map" --specs=nano.specs --specs=nosys.specs -o "camera.elf" $(OBJS) $(USER_OBJS) $(LIBS)
+	@	@	riscv-none-embed-gcc -march=rv32imac -mabi=ilp32 -msmall-data-limit=8 -mno-save-restore -O0 -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -fno-common -Wunused -Wuninitialized  -g -T "C:\Users\Yaner\Desktop\SmartCar\libraries\sdk\Ld\Link.ld" -nostartfiles -Xlinker --gc-sections -L"../" -Wl,-Map,"camera.map" --specs=nano.specs --specs=nosys.specs -o "camera.elf" $(OBJS) $(USER_OBJS) $(LIBS)
 	@	@
 camera.hex: camera.elf
 	@	riscv-none-embed-objcopy -O ihex "camera.elf"  "camera.hex"
