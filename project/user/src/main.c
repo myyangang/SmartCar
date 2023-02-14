@@ -31,12 +31,17 @@ int main(void)
     //ADC初始化，例：adc_init(ADC_IN7_A7);
 
 
+    gpio_init(LED_1_PIN, GPO, 1, GPIO_PIN_CONFIG);
+    gpio_init(BEEP_PIN, GPO, 1, GPIO_PIN_CONFIG);
+    system_delay_ms(500);
+    gpio_set_level(BEEP_PIN, 0);
+
     interrupt_enable_all(0);            // 总中断最后开启
     while(1)
     {
         // 此处编写需要循环执行的代码
 
-
+        gpio_set_level(LED_1_PIN, 1);
 
         if(mt9v03x_finish_flag_dvp == 1)
         {

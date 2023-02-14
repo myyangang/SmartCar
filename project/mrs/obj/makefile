@@ -1,5 +1,5 @@
 ################################################################################
-# Automatically-generated file. Do not edit!
+# 自动生成的文件。不要编辑！
 ################################################################################
 
 -include ../makefile.init
@@ -15,6 +15,7 @@ RM := rm -rf
 -include sdk/Startup/subdir.mk
 -include sdk/Peripheral/subdir.mk
 -include sdk/Core/subdir.mk
+-include code/subdir.mk
 -include subdir.mk
 -include objects.mk
 
@@ -49,12 +50,12 @@ SECONDARY_SIZE += \
 camera.siz \
 
 
-# All Target
+# 所有目标
 all: camera.elf secondary-outputs
 
-# Tool invocations
+# 工具调用
 camera.elf: $(OBJS) $(USER_OBJS)
-	@	@	riscv-none-embed-gcc -march=rv32imac -mabi=ilp32 -msmall-data-limit=8 -mno-save-restore -O0 -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -fno-common -Wunused -Wuninitialized  -g -T "E:\soft-hard-reference\CH32V307\all_program\head before competition\head(2022-6-26BugOver)\libraries\sdk\Ld\Link.ld" -nostartfiles -Xlinker --gc-sections -L"../" -Wl,-Map,"camera.map" --specs=nano.specs --specs=nosys.specs -o "camera.elf" $(OBJS) $(USER_OBJS) $(LIBS)
+	@	@	riscv-none-embed-gcc -march=rv32imac -mabi=ilp32 -msmall-data-limit=8 -mno-save-restore -O0 -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -fno-common -Wunused -Wuninitialized  -g -T "C:\Users\Yaner\Desktop\camera\libraries\sdk\Ld\Link.ld" -nostartfiles -Xlinker --gc-sections -L"../" -Wl,-Map,"camera.map" --specs=nano.specs --specs=nosys.specs -o "camera.elf" $(OBJS) $(USER_OBJS) $(LIBS)
 	@	@
 camera.hex: camera.elf
 	@	riscv-none-embed-objcopy -O ihex "camera.elf"  "camera.hex"
@@ -65,7 +66,7 @@ camera.lst: camera.elf
 camera.siz: camera.elf
 	@	riscv-none-embed-size --format=berkeley "camera.elf"
 	@	@
-# Other Targets
+# 其他目标
 clean:
 	-$(RM) $(ASM_UPPER_DEPS)$(OBJS)$(SECONDARY_FLASH)$(SECONDARY_LIST)$(SECONDARY_SIZE)$(ASM_DEPS)$(S_DEPS)$(S_UPPER_DEPS)$(C_DEPS) camera.elf
 	-@

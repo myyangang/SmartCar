@@ -30,26 +30,10 @@ extern int temp_int;
 
 
 extern uint8_t image_debug[MT9V03X_DVP_H][MT9V03X_DVP_W/8],image_debug_flag,threshold_now;//debug图像，用于调试误触
+
 //adc
 extern unsigned int adc_common[8], adc_L,adc_R, voltage_battery;
 
-//按键拨码
-#define sw1 D0
-#define sw2 D1
-#define sw3 D3
-#define sw4 D4
-#define BUT1 E4
-#define BUT2 E3
-//蜂鸣器
-#define BEEP E10
-//语音模块
-#define VOICE1 C4
-#define VOICE2 B0
-#define VOICE3 B1
-
-//LED
-//#define LED1 E2
-#define DIST_MIN 200
 //摄像头
 enum StatusOfCircleFlagInOrOutMagnet{MagnetNull, MagnetFind};               //MagnetNull为未发现电磁信号，MagnetFind为发现电磁信号
 enum StatusOfCircleFlagDirection{CircleNull,CircleLeft, CircleRight};       //CircleNull为为判断出方向，CircleLeft为左环，CircleRight为右环
@@ -96,6 +80,24 @@ extern int sancha_distance;
 #define SANCHA_ADC_DOWN_LIMIT 1100  //入三叉解除的ADC值，小于这个值代表完全进入三叉可以解除
 #define SANCHA_ADC_UP_LIMIT 1800    //出三叉解除ADC值，大于这个值代表在三叉外了，可以解除
 
+// 定义引脚
+#define LED_1_PIN E2
+#define BTN_1_PIN D6
+#define BTN_2_PIN D4
+#define SW_1_PIN B0
+#define SW_2_PIN B7
+#define SW_3_PIN E0
+#define SW_4_PIN E1
+#define BEEP_PIN D15
+#define MOTOR_PWM_CHANNEL TIM3_PWM_CH1_B4 // TODO:
+#define SERVO_PWM_CHANNEL TIM4_PWM_CH4_B9 // TODO:
+#define MOTOR_DIR_PIN E3 // TODO:
 
+typedef enum{
+    PLUS, MINUS, ASSIGN, OPPOSE
+}MathOperation;
+
+#define max(a,b) (((a)>(b))?(a):(b))
+#define min(a,b) (((a)<(b))?(a):(b))
 
 #endif /* USER_DEFINE_H_ */
