@@ -18,7 +18,7 @@ void initMotor(Motor *motor,int32_t pCoef, int32_t iCoef, int32_t dCoef, int32_t
     initPID(&(motor->pid), pCoef, iCoef, dCoef, target);
     motor->direction = 0;
     motor->pwm = 0;
-    __updateMotorRotation(motor);
+//    __updateMotorRotation(motor);
 }
 
 void changeMotorRotation(Motor *motor, MathOperation operation, uint32_t offset){

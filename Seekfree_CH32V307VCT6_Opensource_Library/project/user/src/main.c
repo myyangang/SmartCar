@@ -24,6 +24,39 @@
 #include "servo.h"
 #include "uart.h"
 
+uint16_t getBlackLine(uint8_t *image_fire, uint8_t threshold){
+
+    uint8_t edgeCounter = 0; //表示连续的黑格子数目
+    uint16_t leftEdge = 0, rightEdge = 0;
+    bool leftEdgeFound = false, rightEdgeFound = false;
+    for (uint16_t i = MT9V03X_W / 2 ; i <= MT9V03X_W ; ++i) {
+        if(image_fire[100 * MT9V03X_W + i] >= threshold){
+            ++edgeCounter;
+        }else{
+            edgeCounter = 0;
+        }
+        if(edgeCounter == 3){
+            leftEdge = i;
+            leftEdgeFound = true;
+            break;
+        }
+    }
+    edgeCounter = 0;
+    for (uint16_t i = MT9V03X_W / 2 ; i >= 0 ; --i) {
+        if(image_fire[100 * MT9V03X_W + i] >= threshold){
+            ++edgeCounter;
+        }else{
+            edgeCounter = 0;
+        }
+        if(edgeCounter == 3){
+            rightEdge = i;
+            rightEdgeFound = true;
+            break;
+        }
+    }
+    return (leftEdge + rightEdge) >> 1;
+}
+
 uint8_t OTSUThershold(uint8_t **image){
 
     uint8_t threshold = 0, threshold_temp = 0;
@@ -69,8 +102,10 @@ int main(void)
     clock_init(SYSTEM_CLOCK_144M);      // 务必保留，设置系统时钟。
     debug_init();                       // 务必保留，本函数用于初始化MPU 时钟 调试串口
 
-        mt9v03x_init();//摄像头初始化
-// 此处编写用户代码(例如：外设初始化代码等)
+    // 初始化摄像头
+    mt9v03x_init();
+
+    // 此处编写用户代码(例如：外设初始化代码等)
     //ADC初始化，例：adc_init(ADC_IN7_A7);
 
     // 初始化LED
@@ -124,25 +159,22 @@ int main(void)
     encoder_quad_init(TIM9_ENCOEDER, TIM9_ENCOEDER_MAP3_CH1_D9, TIM9_ENCOEDER_MAP3_CH2_D11);
 
     // 初始化舵机 TODO
-    Servo servo; initServo(&servo, 10, 5, 2, 0, 250); // TODO:这个PWM靠谱吗
-    pwm_init(SERVO_PWM_CHANNEL, 50, 250);
-    pwm_set_duty(SERVO_PWM_CHANNEL, 250);
+    Servo servo; initServo(&servo, 10, 5, 2, 0, 250); // TODO:这个PWM靠谱吗?为什么只能朝一个方向转？
+    pwm_init(SERVO_PWM_CHANNEL, 330, 250);
+    pwm_set_duty(SERVO_PWM_CHANNEL, servo.pwm);
 
 
     // 初始化LCD
+    tft180_set_dir(TFT180_CROSSWISE);
     tft180_init();
+    tft180_show_string(0, 0, "mt9v03x init.");
 
     // 初始化定时中断
 
-    // 初始化摄像头
-//    dvp_gpio_init(
-//            CAMERA_OUT_1, CAMERA_OUT_2, CAMERA_OUT_3, CAMERA_OUT_4,
-//            CAMERA_OUT_5, CAMERA_OUT_6, CAMERA_OUT_7, CAMERA_OUT_8,
-//            CAMERA_PCLK, MT9V03X_VSYNC_PIN_DVP, MT9V03X_HSYNC_PIN_DVP // TODO:??? VSYNC
-//    );
+
 
     // 大律法求摄像头阈值
-    OTSUThershold((uint8_t**)mt9v03x_image);
+    uint8_t threshold = OTSUThershold((uint8_t**)mt9v03x_image);
 
     interrupt_global_enable(0);          // 总中断最后开启
     while(1)
@@ -153,17 +185,24 @@ int main(void)
         encoder_clear_count(TIM4_ENCOEDER);
 
         motor.direction = 0;
-        motor.pwm = 0;
+        motor.pwm = 1000;
+//        __updateMotorRotation(&motor);
+//        changeServoRotation(&servo, ASSIGN, 250);
 
-        changeServoRotation(&servo, ASSIGN, 3250);
-        __updateServoRotation(&servo);
 
-        __updateMotorRotation(&motor);
 
 //        lcd_show_gray_image(0, 0, image_fire, MT9V03X_DVP_W, MT9V03X_DVP_H, tft180_x_max, tft180_y_max, 0);
 //        lcd_show_gray_image(0, 0, image_fire, MT9V03X_DVP_W, MT9V03X_DVP_H, MT9V03X_DVP_W, MT9V03X_DVP_H, 150);
-//        tft180_show_int(0, 0, 123456, 8);
-        tft180_displayimage03x((const uint8 *)mt9v03x_image, 160, 128);
+//        tft180_show_int(0, 0, motor.pid.measurement, 8);
+        //        tft180_show_int(0, 0, 123456, 8);
+//        tft180_displayimage03x((uint8*)mt9v03x_image, 160, 128);
+        if(mt9v03x_finish_flag)
+        {
+            tft180_displayimage03x((const uint8 *)mt9v03x_image, 160, 128);
+//            tft180_show_gray_image(0, 0, (const uint8 *)mt9v03x_image, MT9V03X_W, MT9V03X_H, 160, 128, 0);
+            mt9v03x_finish_flag = 0;
+        }
+//        tft180_show_gray_image(0, 0, (uint8*)mt9v03x_image, MT9V03X_W, MT9V03X_H, 160, 128, threshold);
 //        if(mt9v03x_finish_flag == 1)
 //        {
 //            old_image_use_flag = image_use_flag; image_debug_flag

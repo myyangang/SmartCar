@@ -12,11 +12,10 @@ void __updateServoRotation(Servo *servo){
 
 
 void initServo(Servo *servo, int32_t pCoef, int32_t iCoef, int32_t dCoef, int32_t target, uint32_t pwm){
-    initPID(&(servo->pid), pCoef, iCoef, dCoef, target);
-    servo->pwm = 250;
-    pwm_init(TIM3_PWM_MAP2_CH1_B4, 17000, 0);
-
-    __updateServoRotation(servo);
+    servo->pid.pCoef = pCoef;
+    servo->pid.iCoef = iCoef;
+    servo->pid.dCoef = dCoef;
+    servo->pwm = pwm;
 }
 
 
