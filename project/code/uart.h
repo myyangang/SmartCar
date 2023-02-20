@@ -22,5 +22,4 @@ void SCI_Send_Datas(uart_index_enum uart_num,
         unsigned short int data_2_1,
         unsigned short int data_2_2,
         unsigned short int data_2_3);
-
 #endif /* CODE_UART_H_ */

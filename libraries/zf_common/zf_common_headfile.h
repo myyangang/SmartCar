@@ -25,7 +25,9 @@
 #include "stdio.h"
 #include "stdint.h"
 #include "string.h"
+
 #include "math.h"
+#include "stdbool.h"
 
 #define USE_ZF_TYPEDEF      0                                                   // 是否启用类型定义申明
 #if USE_ZF_TYPEDEF

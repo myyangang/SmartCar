@@ -22,7 +22,7 @@
 #include "motor.h"
 #include "servo.h"
 #include "uart.h"
-extern Motor motor,motorLeft, motorRight;
+extern Motor motorLeft, motorRight;
 extern Servo servo;
 
 void NMI_Handler(void)       __attribute__((interrupt("WCH-Interrupt-fast")));
@@ -172,6 +172,11 @@ void USART3_IRQHandler(void)
                 break;
             default:
                 break;
+        }
+        for(int i = 0 ; i < MT9V03X_DVP_H ; ++i){
+            for(int j = 0 ; j < MT9V03X_DVP_W ; ++j){
+                uart_write_byte(UART_3, image_fire[MT9V03X_DVP_W * i + j]);
+            }
         }
         USART_ClearITPendingBit(USART3, USART_IT_RXNE);
 
@@ -368,6 +373,13 @@ void TIM1_UP_IRQHandler(void)
 
         updateMotorPID(&motorLeft);
         updateMotorPID(&motorRight);
+
+        servo.pid.measurement = getBlackLine(
+                (uint8_t [MT9V03X_DVP_H][MT9V03X_DVP_W]){image_fire},
+                100
+        );
+        updateServoPID(&servo);
+
         SCI_Send_Datas(UART_3,
 //                motor.pid.pCorr,motor.pid.iCorr,motor.pid.dCorr,motor.pid.deltaOutput,
                 motorLeft.pwm,motorLeft.pid.deltaOutput,motorRight.pwm, motorRight.pid.deltaOutput,
